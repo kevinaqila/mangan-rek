@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { Loader } from "lucide-react";
 
@@ -25,18 +25,18 @@ const App = () => {
   if (isCheckingAuth && !authUser)
     return (
       <div className="flex items-center justify-center h-screen">
-        <Loader className="size-18 animate-spin" />
+        <Loader className="size-18 animate-spin text-gray-400" />
       </div>
     );
   return (
     <div>
-      <Navbar />
+      {authUser && <Navbar />}
 
       <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/signup" element={<SignUpPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/profile" element={<ProfilePage />} />"
+        <Route path="/" element={authUser ? <HomePage /> : <Navigate to="/login" />} />
+        <Route path="/signup" element={authUser ? <Navigate to="/" /> : <SignUpPage />} />
+        <Route path="/login" element={authUser ? <Navigate to="/" /> : <LoginPage />} />
+        <Route path="/profile" element={authUser ? <ProfilePage /> : <Navigate to="/login" />} />"
       </Routes>
 
       <Toaster />
