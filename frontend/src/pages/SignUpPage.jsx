@@ -3,9 +3,11 @@ import { useState } from "react";
 import { useAuthStore } from "../store/useAuthStore";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
+import AuthImage from "../components/AuthImage";
 
 const SignUpPage = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -55,23 +57,7 @@ const SignUpPage = () => {
     <div className="flex items-center justify-center h-screen bg-base-200">
       <div className="bg-base-100 shadow-lg rounded-lg grid lg:grid-cols-2 w-4/5 max-w-4xl">
         {/* Left Column */}
-        <div className="hidden lg:flex flex-col justify-center items-center relative">
-          {/* Background Image */}
-          <div
-            className="absolute inset-0 bg-cover bg-center"
-            style={{
-              backgroundImage:
-                "url('https://images.tokopedia.net/blog-tokopedia-com/uploads/2018/04/Wisata-Malam-Surabaya-4-Travel-Malang.jpg')",
-              filter: "brightness(0.5)", // Hanya redupkan gambar
-            }}
-          ></div>
-
-          {/* Text Content */}
-          <div className="relative z-10 text-center text-white px-15">
-            <h2 className="text-2xl font-bold">Ayo Mangan Rek!</h2>
-            <p className="text-md mt-2">Memberikan pengalaman kuliner terbaik di Surabaya.</p>
-          </div>
-        </div>
+        <AuthImage />
 
         {/* Right Column */}
         <div className="flex flex-col justify-center items-center py-8 px-10">
@@ -144,9 +130,9 @@ const SignUpPage = () => {
               <button
                 type="button"
                 className="absolute right-3 top-3 text-gray-500"
-                onClick={() => setShowPassword(!showPassword)}
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
               >
-                {showPassword ? <EyeOff /> : <Eye />}
+                {showConfirmPassword ? <EyeOff /> : <Eye />}
               </button>
             </div>
 
