@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import slugify from "slugify";
 
 const placeSchema = new mongoose.Schema({
     name: {
@@ -8,7 +9,6 @@ const placeSchema = new mongoose.Schema({
     },
     slug: {
         type: String,
-        required: true,
         unique: true,
         lowercase: true,
     },
@@ -27,10 +27,12 @@ const placeSchema = new mongoose.Schema({
             type: String,
             enum: ['Point'],
             required: true,
+            default: 'Point',
         },
         coordinates: {
             type: [Number],
             required: true,
+            default: [0, 0],
         },
     },
     openHours: {
@@ -54,16 +56,17 @@ const placeSchema = new mongoose.Schema({
         type: String,
         required: true,
         trim: true,
+        default: "",
     },
     galleryImages: {
         type: [String],
         default: [],
     },
-    category: {
+    category: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Category",
         required: true,
-    },
+    }],
     averageRating: {
         type: Number,
         default: 0,

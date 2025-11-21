@@ -6,6 +6,8 @@ import cors from "cors";
 import authRoutes from "./routes/auth.route.js";
 import userRoutes from "./routes/user.route.js";
 import placeRoutes from "./routes/place.route.js";
+import categoryRoutes from "./routes/category.route.js";
+import ratingRoutes from "./routes/rating.route.js";
 import { connectDB } from "./lib/db.js";
 
 dotenv.config();
@@ -25,7 +27,9 @@ app.use(
 
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
-app.use("/api/place", placeRoutes)
+app.use("/api/places", placeRoutes)
+app.use("/api/categories", categoryRoutes)
+app.use("/api/ratings", ratingRoutes)
 
 app.listen(PORT, () => {
     console.log(`server is running on port ${PORT}`);

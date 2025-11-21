@@ -1,11 +1,10 @@
 import { useState } from "react";
-import { Menu, X, Home, User, Settings, ChevronUp } from "lucide-react";
+import { Menu, X, Home, ChevronUp, Compass, Bookmark, MapPinPlus, ClipboardList } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/useAuthStore";
 
-const Navbar = () => {
-  const { authUser, logout } = useAuthStore();
-  const [isNavbarOpen, setIsNavbarOpen] = useState(true);
+const Navbar = ({ isNavbarOpen, setIsNavbarOpen }) => {
+  const { authUser } = useAuthStore();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -14,14 +13,13 @@ const Navbar = () => {
     setIsDropdownOpen(false);
   };
 
-  const handleSetting = () => {
-    navigate("/settings");
+  const handleProfile = () => {
+    navigate("/profile", { replace: true });
     setIsDropdownOpen(false);
   };
 
-  const handleLogout = () => {
-    logout();
-    navigate("/login", { replace: true });
+  const handleSetting = () => {
+    navigate("/setting");
     setIsDropdownOpen(false);
   };
 
@@ -31,7 +29,7 @@ const Navbar = () => {
       <aside
         className={`fixed top-0 left-0 h-full bg-base-200 shadow-lg transition-all duration-300 ${
           isNavbarOpen ? "w-60" : "w-19"
-        } overflow-hidden`}
+        } z-50`}
       >
         <div className="flex flex-col h-full">
           {/* Toggle Button */}
@@ -52,29 +50,79 @@ const Navbar = () => {
               {isNavbarOpen ? <X /> : <Menu />}
             </button>
           </div>
+
           {/* Navigation Links */}
           <nav className="flex-1 mt-16">
             <ul className="menu p-4 w-full gap-3">
+              {/* Link Umum */}
               <li>
                 <Link to="/" className="flex items-center gap-4">
                   <Home />
-                  <span className={`${isNavbarOpen ? "block" : "hidden"}`}>Home</span>
+                  <span className={`${isNavbarOpen ? "block" : "hidden"}`}>Beranda</span>
                 </Link>
               </li>
               <li>
-                <Link to="/profile" className="flex items-center gap-4">
-                  <User />
-                  <span className={`${isNavbarOpen ? "block" : "hidden"}`}>Profile</span>
+                <Link to="/explore" className="flex items-center gap-4">
+                  <Compass />
+                  <span className={`${isNavbarOpen ? "block" : "hidden"}`}>Eksplor</span>
                 </Link>
               </li>
               <li>
-                <Link to="/settings" className="flex items-center gap-4">
-                  <Settings />
-                  <span className={`${isNavbarOpen ? "block" : "hidden"}`}>Settings</span>
+                <Link to="/my-bookmarks" className="flex items-center gap-4">
+                  <Bookmark />
+                  <span className={`${isNavbarOpen ? "block" : "hidden"}`}>Celengan Kuliner</span>
                 </Link>
               </li>
             </ul>
+
+            {/* Navigasi Berdasarkan Role */}
+            <div className="mt-2">
+              <h3
+                className={`${
+                  isNavbarOpen ? "block ml-7" : "hidden"
+                } text-gray-400 text-sm uppercase tracking-wide mb-3`}
+              >
+                Kontributor Panel{" "}
+              </h3>
+              <ul className="menu px-4 w-full gap-3">
+                <li>
+                  <Link to="/add-place" className="flex items-center gap-4">
+                    <MapPinPlus />
+                    <span className={`${isNavbarOpen ? "block" : "hidden"}`}>Tambah Tempat</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/my-contributions" className="flex items-center gap-4">
+                    <ClipboardList /> <span className={`${isNavbarOpen ? "block" : "hidden"}`}>Kontribusi Saya</span>
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            <div className="mt-2">
+              <h3
+                className={`${
+                  isNavbarOpen ? "block ml-7" : "hidden"
+                } text-gray-400 text-sm uppercase tracking-wide mb-3`}
+              >
+                Admin Panel{" "}
+              </h3>
+              <ul className="menu px-4 w-full gap-3">
+                <li>
+                  <Link to="/add-place" className="flex items-center gap-4">
+                    <MapPinPlus />
+                    <span className={`${isNavbarOpen ? "block" : "hidden"}`}>Tambah Tempat</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/my-contributions" className="flex items-center gap-4">
+                    <ClipboardList /> <span className={`${isNavbarOpen ? "block" : "hidden"}`}>Kontribusi Saya</span>
+                  </Link>
+                </li>
+              </ul>
+            </div>
           </nav>
+
           {/* Profile Section */}
           <div className="p-4 border-t border-base-300">
             <div className="flex items-center justify-between">
@@ -98,10 +146,10 @@ const Navbar = () => {
                   {isDropdownOpen && (
                     <ul className="absolute bottom-full right-0 mb-2 menu p-2 shadow bg-base-100 rounded-box w-52 z-20">
                       <li>
-                        <a onClick={handleSetting}>Pengaturan</a>
+                        <a onClick={handleProfile}>Profil Akun</a>
                       </li>
                       <li>
-                        <a onClick={handleLogout}>Keluar</a>
+                        <a onClick={handleSetting}>Pengaturan</a>
                       </li>
                     </ul>
                   )}

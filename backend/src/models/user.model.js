@@ -1,3 +1,4 @@
+import bcrypt from "bcryptjs";
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema({
@@ -19,6 +20,11 @@ const userSchema = new mongoose.Schema({
         minlength: 8,
         select: false,
     },
+    role:{
+        type: String,
+        enum: ["admin", "contributor", "user"],
+        default: "user",
+    },
     profilePic: {
         type: String,
         default: "",
@@ -28,7 +34,15 @@ const userSchema = new mongoose.Schema({
         maxlength: 100,
         default: "",
     },
+    bookmarkedPlaces: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Place",
+    }],
 }, { timestamps: true });
+
+userSchema.methods.comparePassword = async function(enteredPassword) {
+    return await bcrypt.compare(enteredPassword, this.password);
+};
 
 const User = mongoose.model("User", userSchema);
 

@@ -1,17 +1,34 @@
 import express from 'express';
-import { addPlace, deletePlace, getAllPlaces, getPlaceById, updatePlace } from '../controllers/place.controller.js';
+import { addBookmark, addPlace, deletePlace, getAllPlaces, getMyBookmarks, getMyContributions, getNewestPlaces, getPlaceBySlug, getTrendingPlaces, removeBookmark, updatePlace } from '../controllers/place.controller.js';
 import { protectRoute } from '../middleware/auth.middleware.js';
+import { upload } from '../middleware/multer.middleware.js';
+import { checkRole } from '../middleware/role.middleware.js';
 
 const router = express.Router();
 
-router.post("/add-place", protectRoute, addPlace)
+router.post("/", protectRoute, checkRole("admin", "contributor"), upload.fields([{ name: 'mainImage', maxCount: 1 }, { name: 'galleryImages', maxCount: 6 }]), addPlace)
 
 router.get("/explore", getAllPlaces)
 
-router.get("/:id", getPlaceById)
+router.get("/trending", getTrendingPlaces)
 
-router.put("update-place/:id", updatePlace)
+router.get("/newest", getNewestPlaces)
 
-router.delete("/delete-place/:id", deletePlace)
+router.get("/my-contributions", protectRoute, checkRole("admin", "contributor"), getMyContributions)
 
-export default router
+router.get("/my-bookmarks", protectRoute, getMyBookmarks)
+
+router.post("/my-bookmarks/:placeId", protectRoute, addBookmark)
+
+router.delete("/my-bookmarks/:placeId", protectRoute, removeBookmark)
+
+router.put("/:id", protectRoute, checkRole("admin", "contributor"), upload.fields([
+    { name: 'mainImage', maxCount: 1 },
+    { name: 'galleryImages', maxCount: 5 }
+]), updatePlace)
+
+router.delete("/:id", protectRoute, checkRole("admin", "contributor"), deletePlace)
+
+router.get("/:slug", getPlaceBySlug)
+
+export default router;

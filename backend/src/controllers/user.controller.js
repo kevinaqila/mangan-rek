@@ -2,6 +2,39 @@ import fs from "fs"
 import cloudinary from "../lib/cloudinary.js";
 
 import User from "../models/user.model.js";
+import Rating from "../models/rating.model.js";
+import Place from "../models/place.model.js";
+import bcrypt from "bcryptjs";
+
+export const getUserProfile = async(req, res) => {
+    try {
+        const { userId } = req.params;
+        console.log(`Backend menerima permintaan untuk user ID: ${userId}`);
+
+        const user = await User.findById(userId).select("-password -__v -createdAt -updatedAt");
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        const userRatings = await Rating.find({ user: userId })
+            .sort({ createdAt: -1 })
+            .populate("place");
+
+        const placesAddedCount = await Place.countDocuments({ createdBy: userId });
+
+        res.status(200).json({
+            user: user,
+            totalReviews: userRatings.length,
+            totalPlacesAdded: placesAddedCount,
+            activities: userRatings
+        });
+
+    } catch (error) {
+        console.log("Error in getUserProfile controller", error.message);
+        res.status(500).json({ message: "Internal server error" });
+    }
+}
 
 export const updateProfile = async(req, res) => {
     try {
