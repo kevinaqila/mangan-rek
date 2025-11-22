@@ -31,12 +31,16 @@ export const signup = async (req, res) => {
     const token = generateToken(newUser._id);
 
     res.status(201).json({
-      _id: newUser._id,
-      fullName: newUser.fullName,
-      email: newUser.email,
-      role: newUser.role,
-      profilePic: newUser.profilePic,
-      bio: newUser.bio,
+      message: "User created successfully",
+      token,
+      user: {
+        _id: newUser._id,
+        fullName: newUser.fullName,
+        email: newUser.email,
+        role: newUser.role,
+        profilePic: newUser.profilePic,
+        bio: newUser.bio,
+      },
     });
   } catch (error) {
     res.status(500).json({ message: "Internal server error" });
@@ -59,12 +63,16 @@ export const login = async (req, res) => {
     }
     const token = generateToken(user._id);
     res.status(200).json({
-      _id: user._id,
-      fullName: user.fullName,
-      email: user.email,
-      role: user.role,
-      profilePic: user.profilePic,
-      bio: user.bio,
+      message: "Login successful",
+      token,
+      user: {
+        _id: user._id,
+        fullName: user.fullName,
+        email: user.email,
+        role: user.role,
+        profilePic: user.profilePic,
+        bio: user.bio,
+      },
     });
   } catch (error) {
     console.log("Error in login controller", error.message);
@@ -72,13 +80,8 @@ export const login = async (req, res) => {
   }
 };
 
-export const logout = async (req, res) => {
-  try {
-    res.status(200).json({ message: "Logged out successfully" });
-  } catch (error) {
-    console.log("Error in logout controller", error.message);
-    res.status(500).json({ message: "Internal server error" });
-  }
+export const logout = (req, res) => {
+  res.status(200).json({ message: "Logged out successfully" });
 };
 
 export const checkAuth = async (req, res) => {

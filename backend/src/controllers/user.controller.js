@@ -4,7 +4,6 @@ import cloudinary from "../lib/cloudinary.js";
 import User from "../models/user.model.js";
 import Rating from "../models/rating.model.js";
 import Place from "../models/place.model.js";
-import bcrypt from "bcryptjs";
 
 export const getUserProfile = async(req, res) => {
     try {
@@ -79,3 +78,11 @@ export const updateProfile = async(req, res) => {
         res.status(500).json({ message: "Internal server error" });
     }
 };
+
+export const submitRole = async (req, res) => { 
+    try {
+        
+    } catch (error) {
+        
+    }
+}3
