@@ -59,17 +59,16 @@ npm run dev
 
 ## 🚀 Deployment
 
-### Frontend (Vercel)
-1. Push your code to GitHub
-2. Connect your repo to Vercel
-3. Set environment variable: `VITE_API_BASE_URL=https://your-backend-url.vercel.app`
-4. Deploy
-
 ### Backend (Railway)
 1. Create Railway account
 2. Connect your GitHub repo
 3. Set environment variables in Railway dashboard
 4. Deploy
+
+### Frontend (Vercel)
+1. Connect your repo to Vercel
+2. Set environment variable: `VITE_API_BASE_URL=https://your-backend-url.up.railway.app`
+3. Deploy
 
 ### Environment Variables
 
@@ -86,7 +85,7 @@ FRONTEND_URL=https://your-frontend.vercel.app
 
 #### Frontend (Vercel)
 ```
-VITE_API_BASE_URL=https://your-backend-url.vercel.app
+VITE_API_BASE_URL=https://your-backend-url.up.railway.app
 ```
 
 ## 📱 Usage

@@ -14,14 +14,14 @@ import { connectDB } from "./lib/db.js";
 dotenv.config();
 const app = express();
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 5001;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(
   cors({
-    origin: ["http://localhost:5173", process.env.FRONTEND_URL].filter(Boolean), // Remove undefined values
+    origin: ["http://localhost:5173", process.env.FRONTEND_URL].filter(Boolean),
     credentials: true,
   })
 );
@@ -33,7 +33,16 @@ app.use("/api/categories", categoryRoutes);
 app.use("/api/ratings", ratingRoutes);
 app.use("/api/role-requests", roleRequestRoutes);
 
-app.listen(PORT, () => {
-  console.log(`server is running on port ${PORT}`);
+// Root route for health check
+app.get("/", (req, res) => {
+  res.json({
+    message: "Mangan Rek API Server",
+    status: "running",
+    version: "1.0.0",
+  });
+});
+
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server running on port ${PORT}`);
   connectDB();
 });
