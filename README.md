@@ -88,7 +88,26 @@ FRONTEND_URL=https://your-frontend.vercel.app
 VITE_API_BASE_URL=https://your-backend-url.up.railway.app
 ```
 
-## 📱 Usage
+## � Troubleshooting
+
+### "Cannot GET /" (Backend)
+✅ **Fixed**: Added root route for health checks
+
+### "Failed to load module script" (Frontend)
+- ✅ **Fixed**: Simplified Vercel configuration
+- Make sure `vercel.json` uses simple rewrites
+- Check that build produces correct assets
+
+### CORS Issues
+- Ensure `FRONTEND_URL` is set correctly in backend
+- Include both development and production URLs
+
+### Build Errors
+- Run `npm run build` locally first
+- Check that all dependencies are installed
+- Verify Vite configuration
+
+## �📱 Usage
 
 1. Register/Login to access the app
 2. Browse food places on the home page
