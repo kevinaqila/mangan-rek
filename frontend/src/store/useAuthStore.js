@@ -10,7 +10,6 @@ export const useAuthStore = create((set) => ({
   isUpdatingPassword: false,
 
   checkAuth: async () => {
-    set({ isCheckingAuth: true });
     try {
       const token = localStorage.getItem("token");
       if (!token) {
@@ -23,15 +22,14 @@ export const useAuthStore = create((set) => ({
 
       const res = await axiosInstance.get("/auth/check");
       set({
-        authUser: res.data,
+        authUser: res.data.user,
+        isCheckingAuth: false,
       });
     } catch (error) {
       console.log("Error in checkAuth", error);
+      localStorage.removeItem("token");
       set({
         authUser: null,
-      });
-    } finally {
-      set({
         isCheckingAuth: false,
       });
     }

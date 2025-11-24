@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 import { usePlaceStore } from "../store/usePlaceStore";
 import { useCategoryStore } from "../store/useCategoryStore";
+import { useAuthStore } from "../store/useAuthStore";
 
 import { useEffect, useMemo, useState } from "react";
 
@@ -11,6 +12,7 @@ import PopularCategory from "../components/PopularCategory";
 
 const HomePage = ({ isNavbarOpen }) => {
   const navigate = useNavigate();
+  const { authUser } = useAuthStore();
 
   const { places, getAllPlaces } = usePlaceStore();
   const { categories, getCategories } = useCategoryStore();
@@ -27,7 +29,7 @@ const HomePage = ({ isNavbarOpen }) => {
 
   const filteredPlaces = useMemo(() => {
     if (!searchQuery) return [];
-    return places.filter((place) => place.name.toLowerCase().includes(searchQuery.toLowerCase())).slice(0, 5); // Batasi hanya 5 hasil teratas
+    return places.filter((place) => place.name.toLowerCase().includes(searchQuery.toLowerCase())).slice(0, 5);
   }, [searchQuery, places]);
 
   const handleSearchSubmit = (e) => {
@@ -39,7 +41,7 @@ const HomePage = ({ isNavbarOpen }) => {
   };
 
   return (
-    <div className={`transition-all duration-300 ${isNavbarOpen ? "ml-64" : "ml-22"} p-4 md:p-6 relative `}>
+    <div className={`transition-all duration-300 ${isNavbarOpen ? "ml-64" : "ml-22"} p-4 md:p-6 relative`}>
       {/* Hero Section */}
       <section
         className="hero min-h-[50vh] bg-cover bg-center bg-no-repeat relative flex flex-col items-center justify-center text-center px-4"
@@ -95,13 +97,31 @@ const HomePage = ({ isNavbarOpen }) => {
           )}
         </div>
       </section>
-
+      {/* Banner Login untuk Non-Logged In Users */}
+      {!authUser && (
+        <div className="my-6 bg-base-100 text-base-content rounded-lg p-4 shadow-md border border-transparent">
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <h3 className="font-bold text-lg">Ingin menyimpan tempat favorit?</h3>
+              <p className="text-sm text-base-content/70">
+                Login untuk menyimpan tempat ke celengan kuliner dan memberikan review.
+              </p>
+            </div>
+            <div className="flex gap-2">
+              <Link to="/login" className="btn btn-primary">
+                Masuk
+              </Link>
+              <Link to="/signup" className="btn btn-secondary">
+                Daftar
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
       {/* Kategori Populer */}
       <PopularCategory categories={categories} />
-
       {/* Sedang Trending */}
       <TrendingCarousel />
-
       {/* Daftar Rekomendasi */}
       <section className="mt-10">
         <h2 className="text-2xl font-bold mb-4">Rekomendasi Pilihan</h2>
@@ -126,19 +146,34 @@ const HomePage = ({ isNavbarOpen }) => {
           {/* Tambahkan lebih banyak kartu sesuai kebutuhan */}
         </div>
       </section>
-
       {/* Tempat Baru Ditambahkan */}
       <NewestCarousel />
-
-      <section className="bg-blue-700 text-white py-10 mt-10 rounded-lg shadow-md">
-        <div className="container mx-auto text-center">
-          <h2 className="text-2xl font-bold mb-4">Tahu tempat makan enak yang belum ada di sini?</h2>
-          <p className="mb-6 text-lg">Jadilah kontributor dan bantu teman-temanmu menemukan tempat makan terbaik!</p>
-          <a href="/signup" className="btn btn-primary px-6 py-3 text-lg font-semibold">
-            Daftar Sekarang
-          </a>
-        </div>
-      </section>
+      {authUser && (
+        <section className="bg-blue-700 text-white py-10 mt-10 rounded-lg shadow-md">
+          <div className="container mx-auto text-center">
+            <h2 className="text-2xl font-bold mb-4">Tahu tempat makan enak yang belum ada di sini?</h2>
+            <p className="mb-6 text-lg">Jadilah kontributor dan bantu teman-temanmu menemukan tempat makan terbaik!</p>
+            {authUser.role === "user" ? (
+              <Link to="/profile" className="btn btn-primary px-6 py-3 text-lg font-semibold">
+                Ajukan Menjadi Kontributor
+              </Link>
+            ) : authUser.role === "contributor" ? (
+              <Link to="/add-place" className="btn btn-primary px-6 py-3 text-lg font-semibold">
+                Tambah Tempat Sekarang
+              </Link>
+            ) : (
+              <div className="flex gap-4 justify-center ">
+                <Link to="/signup" className="btn btn-primary px-6 py-3 text-lg font-semibold">
+                  Daftar Sekarang
+                </Link>
+                <Link to="/login" className="btn btn-secondary px-6 py-3 text-lg font-semibold">
+                  Masuk
+                </Link>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
     </div>
   );
 };

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import { usePlaceStore } from "../store/usePlaceStore";
 import { useCategoryStore } from "../store/useCategoryStore";
+import { useAuthStore } from "../store/useAuthStore";
 import toast from "react-hot-toast";
 import MapInput from "../components/MapInput";
 import { Loader2, X } from "lucide-react";
@@ -21,9 +22,17 @@ const dayNames = {
 
 const AddPlacePage = ({ isNavbarOpen }) => {
   const navigate = useNavigate();
+  const { authUser } = useAuthStore();
 
   const { addPlace, isAddingPlace } = usePlaceStore();
   const { categories, getCategories } = useCategoryStore();
+
+  useEffect(() => {
+    if (authUser && authUser.role !== "contributor" && authUser.role !== "admin") {
+      toast.error("Hanya Kontributor dan Admin yang dapat menambah tempat");
+      navigate("/", { replace: true });
+    }
+  }, [authUser, navigate]);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -171,10 +180,7 @@ const AddPlacePage = ({ isNavbarOpen }) => {
         <div className="mb-4 grid grid-cols-2 gap-4">
           <div>
             <label className="label">Lokasi Tempat Makan</label>
-            <MapInput
-              initialPosition={markerPosition}
-              onPositionChange={setMarkerPosition} // Langsung update state di AddPlaceForm
-            />
+            <MapInput initialPosition={markerPosition} onPositionChange={setMarkerPosition} />
           </div>
         </div>
 

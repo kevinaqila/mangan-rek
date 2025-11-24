@@ -1,8 +1,21 @@
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { usePlaceStore } from "../store/usePlaceStore";
+import { useAuthStore } from "../store/useAuthStore";
+import toast from "react-hot-toast";
 
 const MyContributionPage = ({ isNavbarOpen }) => {
+  const navigate = useNavigate();
+  const { authUser } = useAuthStore();
   const { myContributions, getMyContributions, isLoadingContributions } = usePlaceStore();
+
+  // Guard: hanya contributor dan admin yang bisa access
+  useEffect(() => {
+    if (authUser && authUser.role !== "contributor" && authUser.role !== "admin") {
+      toast.error("Hanya Kontributor dan Admin yang dapat melihat halaman ini");
+      navigate("/", { replace: true });
+    }
+  }, [authUser, navigate]);
 
   useEffect(() => {
     getMyContributions();

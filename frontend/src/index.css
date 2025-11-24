@@ -1,2 +1,38 @@
 @import "tailwindcss";
 @plugin "daisyui";
+
+/* Custom Swiper Pagination */
+.swiper-pagination-bullet {
+  background: rgba(255, 255, 255, 0.5) !important;
+  opacity: 1 !important;
+}
+
+.swiper-pagination-bullet-active {
+  background: #3b82f6 !important;
+}
+
+/* Custom Swiper Navigation */
+.swiper-button-next,
+.swiper-button-prev {
+  background: transparent !important;
+  color: #ffffff !important; /* white */
+  width: 50px !important;
+  height: 50px !important;
+  border-radius: 50% !important;
+  box-shadow: none !important;
+  border: none !important;
+  font-size: 24px !important;
+  font-weight: bolder !important;
+  transition: color 0.3s ease !important;
+}
+
+.swiper-button-next:hover,
+.swiper-button-prev:hover {
+  color: #e5e7eb !important; /* gray-200 */
+}
+
+.swiper-button-next:after,
+.swiper-button-prev:after {
+  font-size: 20px !important;
+  font-weight: bold !important;
+}

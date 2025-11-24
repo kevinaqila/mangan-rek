@@ -1,11 +1,34 @@
 import { useState } from "react";
 import { useRatingStore } from "../store/useRatingStore";
+import { useAuthStore } from "../store/useAuthStore";
+import { Link } from "react-router-dom";
 
 const CommentForm = ({ placeId }) => {
+  const { authUser } = useAuthStore();
   const [text, setText] = useState("");
   const [rate, setRate] = useState(0);
   const [images, setImages] = useState(null);
   const { addRating, isAddingRating } = useRatingStore();
+
+  // Jika user belum login, tampilkan prompt login
+  if (!authUser) {
+    return (
+      <div className="mt-6 p-6 bg-gray-800 rounded-lg shadow-md border border-transparent text-center">
+        <p className="font-semibold text-gray-100 mb-4">Ingin memberikan komentar?</p>
+        <p className="text-gray-300 mb-6">
+          Silakan login atau daftar terlebih dahulu untuk memberikan ulasan dan komentar.
+        </p>
+        <div className="flex gap-3 justify-center">
+          <Link to="/login" className="btn btn-primary btn-sm">
+            Masuk
+          </Link>
+          <Link to="/signup" className="btn btn-secondary btn-sm">
+            Daftar
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   const handleImageChange = (e) => {
     if (e.target.files) {

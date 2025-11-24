@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Menu, X, Home, ChevronUp, Compass, Bookmark, MapPinPlus, ClipboardList } from "lucide-react";
+import { Menu, X, Home, ChevronUp, Compass, Bookmark, MapPinPlus, ClipboardList, Handshake } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/useAuthStore";
 
@@ -76,86 +76,109 @@ const Navbar = ({ isNavbarOpen, setIsNavbarOpen }) => {
             </ul>
 
             {/* Navigasi Berdasarkan Role */}
-            <div className="mt-2">
-              <h3
-                className={`${
-                  isNavbarOpen ? "block ml-7" : "hidden"
-                } text-gray-400 text-sm uppercase tracking-wide mb-3`}
-              >
-                Kontributor Panel{" "}
-              </h3>
-              <ul className="menu px-4 w-full gap-3">
-                <li>
-                  <Link to="/add-place" className="flex items-center gap-4">
-                    <MapPinPlus />
-                    <span className={`${isNavbarOpen ? "block" : "hidden"}`}>Tambah Tempat</span>
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/my-contributions" className="flex items-center gap-4">
-                    <ClipboardList /> <span className={`${isNavbarOpen ? "block" : "hidden"}`}>Kontribusi Saya</span>
-                  </Link>
-                </li>
-              </ul>
-            </div>
+            {authUser?.role === "contributor" && (
+              <div className="mt-2">
+                <h3
+                  className={`${
+                    isNavbarOpen ? "block ml-7" : "hidden"
+                  } text-gray-400 text-sm uppercase tracking-wide mb-3`}
+                >
+                  Kontributor Panel{" "}
+                </h3>
+                <ul className="menu px-4 w-full gap-3">
+                  <li>
+                    <Link to="/add-place" className="flex items-center gap-4">
+                      <MapPinPlus />
+                      <span className={`${isNavbarOpen ? "block" : "hidden"}`}>Tambah Tempat</span>
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/my-contributions" className="flex items-center gap-4">
+                      <ClipboardList /> <span className={`${isNavbarOpen ? "block" : "hidden"}`}>Kontribusi Saya</span>
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+            )}
 
-            <div className="mt-2">
-              <h3
-                className={`${
-                  isNavbarOpen ? "block ml-7" : "hidden"
-                } text-gray-400 text-sm uppercase tracking-wide mb-3`}
-              >
-                Admin Panel{" "}
-              </h3>
-              <ul className="menu px-4 w-full gap-3">
-                <li>
-                  <Link to="/add-place" className="flex items-center gap-4">
-                    <MapPinPlus />
-                    <span className={`${isNavbarOpen ? "block" : "hidden"}`}>Tambah Tempat</span>
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/my-contributions" className="flex items-center gap-4">
-                    <ClipboardList /> <span className={`${isNavbarOpen ? "block" : "hidden"}`}>Kontribusi Saya</span>
-                  </Link>
-                </li>
-              </ul>
-            </div>
+            {authUser?.role === "admin" && (
+              <div className="mt-2">
+                <h3
+                  className={`${
+                    isNavbarOpen ? "block ml-7" : "hidden"
+                  } text-gray-400 text-sm uppercase tracking-wide mb-3`}
+                >
+                  Admin Panel{" "}
+                </h3>
+                <ul className="menu px-4 w-full gap-3">
+                  <li>
+                    <Link to="/add-place" className="flex items-center gap-4">
+                      <MapPinPlus />
+                      <span className={`${isNavbarOpen ? "block" : "hidden"}`}>Tambah Tempat</span>
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/my-contributions" className="flex items-center gap-4">
+                      <ClipboardList /> <span className={`${isNavbarOpen ? "block" : "hidden"}`}>Kontribusi Saya</span>
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/admin/role-requests" className="flex items-center gap-4">
+                      <Handshake />
+                      <span className={`${isNavbarOpen ? "block" : "hidden"}`}>Persetujuan Role</span>
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+            )}
           </nav>
 
           {/* Profile Section */}
           <div className="p-4 border-t border-base-300">
-            <div className="flex items-center justify-between">
-              {/* Profile Picture */}
-              <div className="flex items-center">
-                <img src="/images/avatar.png" alt="Profile" className="w-10 h-10 rounded-full" />
+            {authUser ? (
+              <div className="flex items-center justify-between">
+                {/* Profile Picture */}
+                <div className="flex items-center">
+                  <img src="/images/avatar.png" alt="Profile" className="w-10 h-10 rounded-full" />
+                  {isNavbarOpen && (
+                    <div className="ml-3">
+                      <p className="font-bold">{authUser?.fullName}</p>
+                    </div>
+                  )}
+                </div>
+
                 {isNavbarOpen && (
-                  <div className="ml-3">
-                    <p className="font-bold">{authUser?.fullName}</p>
+                  <div className="relative">
+                    <button className="btn btn-ghost btn-circle" onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
+                      <ChevronUp
+                        className={`transition-transform duration-300 ${isDropdownOpen ? "rotate-180" : "rotate-0"}`}
+                      />
+                    </button>
+                    {isDropdownOpen && (
+                      <ul className="absolute bottom-full right-0 mb-2 menu p-2 shadow bg-base-100 rounded-box w-52 z-20">
+                        <li>
+                          <a onClick={handleProfile}>Profil Akun</a>
+                        </li>
+                        <li>
+                          <a onClick={handleSetting}>Pengaturan</a>
+                        </li>
+                      </ul>
+                    )}
                   </div>
                 )}
               </div>
-
-              {isNavbarOpen && (
-                <div className="relative">
-                  <button className="btn btn-ghost btn-circle" onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
-                    <ChevronUp
-                      className={`transition-transform duration-300 ${isDropdownOpen ? "rotate-180" : "rotate-0"}`}
-                    />
-                  </button>
-                  {isDropdownOpen && (
-                    <ul className="absolute bottom-full right-0 mb-2 menu p-2 shadow bg-base-100 rounded-box w-52 z-20">
-                      <li>
-                        <a onClick={handleProfile}>Profil Akun</a>
-                      </li>
-                      <li>
-                        <a onClick={handleSetting}>Pengaturan</a>
-                      </li>
-                    </ul>
-                  )}
+            ) : (
+              isNavbarOpen && (
+                <div className="space-y-2">
+                  <Link to="/login" className="btn btn-primary btn-sm w-full">
+                    Masuk
+                  </Link>
+                  <Link to="/signup" className="btn btn-secondary btn-sm w-full">
+                    Daftar
+                  </Link>
                 </div>
-              )}
-            </div>
+              )
+            )}
           </div>
         </div>
       </aside>

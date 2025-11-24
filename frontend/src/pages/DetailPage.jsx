@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { MapPin, Clock, DollarSign, Star, Bookmark } from "lucide-react";
 import { usePlaceStore } from "../store/usePlaceStore";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import MapDisplay from "../components/MapDisplay";
 import GalleryImage from "../components/GalleryImage";
 import { useRatingStore } from "../store/useRatingStore";
@@ -138,33 +138,33 @@ const DetailPage = ({ isNavbarOpen }) => {
   );
 };
 
-    const BookmarkAction = ({ selectedPlace }) => {
-      const { bookmarks, addBookmark, removeBookmark, loadingBookmarkIds } = usePlaceStore();
+const BookmarkAction = ({ selectedPlace }) => {
+  const { bookmarks, addBookmark, removeBookmark, loadingBookmarkIds } = usePlaceStore();
 
-      const isBookmarked = bookmarks && bookmarks.find((b) => (b._id || b.id) === (selectedPlace._id || selectedPlace.id));
+  const isBookmarked = bookmarks && bookmarks.find((b) => (b._id || b.id) === (selectedPlace._id || selectedPlace.id));
 
-      const handleToggle = async () => {
-        try {
-          if (isBookmarked) {
-            await removeBookmark(selectedPlace._id || selectedPlace.id);
-          } else {
-            await addBookmark(selectedPlace._id || selectedPlace.id, selectedPlace);
-          }
-        } catch (err) {
-          // error handled by store
-        }
-      };
+  const handleToggle = async () => {
+    try {
+      if (isBookmarked) {
+        await removeBookmark(selectedPlace._id || selectedPlace.id);
+      } else {
+        await addBookmark(selectedPlace._id || selectedPlace.id, selectedPlace);
+      }
+    } catch (err) {
+      // error handled by store
+    }
+  };
 
-      return (
-        <button
-          onClick={handleToggle}
-          disabled={loadingBookmarkIds.has(selectedPlace._id || selectedPlace.id)}
-          className="absolute top-4 right-4 bg-white/90 p-3 rounded-full shadow hover:scale-105 transition-transform"
-          aria-label={isBookmarked ? "Hapus Bookmark" : "Tambah Bookmark"}
-        >
-          <Bookmark className={`w-5 h-5 ${isBookmarked ? "text-yellow-500" : "text-gray-400"}`} />
-        </button>
-      );
-    };
+  return (
+    <button
+      onClick={handleToggle}
+      disabled={loadingBookmarkIds.has(selectedPlace._id || selectedPlace.id)}
+      className="absolute top-4 right-4 bg-white/90 p-3 rounded-full shadow hover:scale-105 transition-transform"
+      aria-label={isBookmarked ? "Hapus Bookmark" : "Tambah Bookmark"}
+    >
+      <Bookmark className={`w-5 h-5 ${isBookmarked ? "text-yellow-500" : "text-gray-400"}`} />
+    </button>
+  );
+};
 
 export default DetailPage;

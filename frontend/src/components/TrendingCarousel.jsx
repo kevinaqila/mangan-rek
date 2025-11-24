@@ -35,15 +35,19 @@ const TrendingCarousel = () => {
           768: { slidesPerView: 3 },
           1024: { slidesPerView: 4 },
         }}
-        className="w-full"
+        className="w-full pb-8"
       >
         {isLoadingTrendingPlaces ? (
           <p>Memuat Tempat Trending...</p>
         ) : (
           <>
             {trendingPlaces.map((place) => (
-              <SwiperSlide key={place.id}>
-                <Link to={`/${place.slug}`} key={place.id} className="card bg-base-100 shadow-md  min-h-[260px]">
+              <SwiperSlide key={place.id} className="pb-8">
+                <Link
+                  to={`/${place.slug}`}
+                  key={place.id}
+                  className="card bg-base-100 shadow-lg border border-base-300 min-h-[260px] hover:shadow-xl transition-shadow"
+                >
                   <figure>
                     <img src={place.mainImage} alt={place.name} className="w-full h-40 object-cover" />
                   </figure>

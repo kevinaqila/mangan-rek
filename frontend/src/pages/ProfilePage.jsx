@@ -1,19 +1,37 @@
 import { Link } from "react-router-dom";
 import { useUserStore } from "../store/useUserStore";
 import { useAuthStore } from "../store/useAuthStore";
-import { useEffect } from "react";
-import { Loader } from "lucide-react";
+import { useRoleRequestStore } from "../store/useRoleRequestStore";
+import { useEffect, useState } from "react";
+import { Loader, FileText } from "lucide-react";
+import toast from "react-hot-toast";
 
 const ProfilePage = ({ isNavbarOpen }) => {
   const { authUser } = useAuthStore();
   const { userProfile, getUserProfile, isFetchingProfile } = useUserStore();
-
+  const { submitRoleRequest, isSubmitting } = useRoleRequestStore();
+  const [showRoleModal, setShowRoleModal] = useState(false);
+  const [roleReason, setRoleReason] = useState("");
   useEffect(() => {
     if (authUser) {
       console.log("Memanggil getUserProfile untuk ID:", authUser._id);
       getUserProfile(authUser._id);
     }
   }, [authUser, getUserProfile]);
+
+  const handleSubmitRoleRequest = async () => {
+    if ("contributor" === authUser?.role) {
+      toast.error("Anda sudah memiliki role Kontributor atau lebih tinggi");
+      return;
+    }
+    try {
+      await submitRoleRequest("contributor", roleReason);
+      setShowRoleModal(false);
+      setRoleReason("");
+    } catch (error) {
+      console.error("Error submitting role request:", error);
+    }
+  };
 
   if (isFetchingProfile || !userProfile || !userProfile.user) {
     return (
@@ -38,11 +56,26 @@ const ProfilePage = ({ isNavbarOpen }) => {
           <div>
             <h1 className="text-2xl font-bold">{user.fullName}</h1>
             <p className="text-gray-500">{user.bio}</p>
+            {user.role !== "user" && (
+              <div
+                className={`badge ${
+                  user.role === "admin" ? "badge-error" : "badge-info"
+                } mt-2 px-3 py-1 text-sm font-semibold`}
+              >
+                {user.role === "contributor" ? "⭐ Kontributor" : "👑 Admin"}
+              </div>
+            )}
           </div>
         </div>
         <Link to={`/editprofile`} className="btn btn-primary mt-4">
           Edit Profil
         </Link>
+        {authUser?.role === "user" && (
+          <button onClick={() => setShowRoleModal(true)} className="btn btn-info mt-4 ml-2 gap-2">
+            <FileText className="w-4 h-4" />
+            Ajukan Permintaan Role
+          </button>
+        )}
       </div>
 
       {/* Statistik Kontribusi */}
@@ -85,6 +118,58 @@ const ProfilePage = ({ isNavbarOpen }) => {
           ))}
         </ul>
       </div>
+
+      {/* Modal Request Role */}
+      {showRoleModal && (
+        <dialog className="modal modal-open">
+          <div className="modal-box w-full max-w-md">
+            <h3 className="font-bold text-lg mb-4">Ajukan Permintaan Role Kontributor</h3>
+
+            <div className="space-y-4">
+              {/* Reason */}
+              <div>
+                <label className="label">
+                  <spans className="label-text">Alasan (Opsional)</spans>
+                </label>
+                <textarea
+                  placeholder="Jelaskan mengapa Anda ingin naik role..."
+                  className="textarea textarea-bordered w-full mt-2"
+                  value={roleReason}
+                  onChange={(e) => setRoleReason(e.target.value)}
+                  rows="4"
+                />
+              </div>
+            </div>
+
+            {/* Modal Actions */}
+            <div className="modal-action mt-6">
+              <button
+                onClick={() => {
+                  setShowRoleModal(false);
+                  setRoleReason("");
+                }}
+                className="btn btn-ghost"
+                disabled={isSubmitting}
+              >
+                Batal
+              </button>
+              <button onClick={handleSubmitRoleRequest} className="btn btn-primary" disabled={isSubmitting}>
+                {isSubmitting ? (
+                  <>
+                    <span className="loading loading-spinner loading-sm"></span>
+                    Mengirim...
+                  </>
+                ) : (
+                  "Ajukan"
+                )}
+              </button>
+            </div>
+          </div>
+          <form method="dialog" className="modal-backdrop">
+            <button onClick={() => setShowRoleModal(false)}>close</button>
+          </form>
+        </dialog>
+      )}
     </div>
   );
 };
