@@ -15,7 +15,8 @@ export const useCategoryStore = create((set) => ({
       const res = await axiosInstance.get("/api/categories");
       set({ categories: res.data });
     } catch (error) {
-      toast.error(error.response.data.mesage);
+      const message = error.response?.data?.message || "Failed to load categories";
+      toast.error(message);
     } finally {
       set({ isLoadingCategories: false });
     }
