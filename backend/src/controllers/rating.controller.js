@@ -84,7 +84,14 @@ export const deleteRating = async(req, res) => {
             return res.status(404).json({ message: "Rating not found" });
         }
         await Rating.findByIdAndDelete(ratingId);
-        await Rating.updatePlaceRating(rating.place);
+        
+        // Manual update of place rating
+        try {
+            await Rating.updatePlaceRating(rating.place);
+        } catch (err) {
+            console.log("Warning: Could not update place rating after delete:", err.message);
+            // Don't fail the request if rating update fails
+        }
 
         res.status(200).json({ message: "Rating deleted successfully" });
     } catch (error) {

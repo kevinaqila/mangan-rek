@@ -8,7 +8,16 @@ export const connectDB = async () => {
   }
 
   try {
-    const conn = await mongoose.connect(process.env.MONGODB_URL, {
+    const mongoUri = process.env.MONGODB_URL;
+    
+    if (!mongoUri) {
+      console.error("❌ MONGODB_URL environment variable is not set!");
+      console.log("⚠️  Please set MONGODB_URL in your .env file or Vercel dashboard");
+      process.exit(1);
+    }
+
+    console.log("Connecting to MongoDB...");
+    const conn = await mongoose.connect(mongoUri, {
       serverSelectionTimeoutMS: 10000,
       socketTimeoutMS: 20000,
       maxPoolSize: 5,
@@ -21,21 +30,24 @@ export const connectDB = async () => {
 
     dbConnection = conn;
     
-    // Handle connection events
     mongoose.connection.on("disconnected", () => {
-      console.warn("MongoDB disconnected");
+      console.warn("⚠️  MongoDB disconnected");
       dbConnection = null;
     });
 
     mongoose.connection.on("error", (error) => {
-      console.error("MongoDB connection error:", error.message);
+      console.error("❌ MongoDB error:", error.message);
       dbConnection = null;
     });
 
-    console.log(`✅ MongoDB connected: ${conn.connection.host}`);
+    console.log(`✅ MongoDB connected`);
     return conn;
   } catch (error) {
-    console.error("❌ MongoDB connection error:", error.message);
+    console.error("❌ MongoDB connection failed:", error.message);
+    console.error("Check that:");
+    console.error("1. MONGODB_URL environment variable is set");
+    console.error("2. Network connectivity to MongoDB Atlas");
+    console.error("3. IP whitelist in MongoDB Atlas (allow 0.0.0.0/0 for testing)");
     dbConnection = null;
     process.exit(1);
   }

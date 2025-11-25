@@ -35,32 +35,28 @@ const ratingSchema = new mongoose.Schema({
 
 ratingSchema.index({ user: 1, place: 1 }, { unique: true });
 
-ratingSchema.post("save", async function() {
-    await this.constructor.updatePlaceRating(this.place);
-});
+// Removed post hook that was causing timeout
+// Rating updates will be handled manually in controller
 
 ratingSchema.statics.updatePlaceRating = async function(placeId) {
-
-    const stats = await this.aggregate([{
-            $match: { place: placeId }
-        },
-        {
-            $group: {
-                _id: '$place',
-                totalRating: { $sum: 1 },
-                averageRating: { $avg: '$rate' }
-            }
-        }
-    ]);
-
     try {
+        const stats = await this.aggregate([
+            { $match: { place: placeId } },
+            {
+                $group: {
+                    _id: '$place',
+                    totalRating: { $sum: 1 },
+                    averageRating: { $avg: '$rate' }
+                }
+            }
+        ]);
+
         if (stats.length > 0) {
             await Place.findByIdAndUpdate(placeId, {
                 totalRating: stats[0].totalRating,
-                averageRating: stats[0].averageRating.toFixed(1) // Bulatkan ke 1 desimal
+                averageRating: stats[0].averageRating.toFixed(1)
             });
         } else {
-            // Jika tidak ada rating tersisa, reset ke 0
             await Place.findByIdAndUpdate(placeId, {
                 totalRating: 0,
                 averageRating: 0
