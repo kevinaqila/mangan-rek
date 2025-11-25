@@ -9,14 +9,14 @@ export const connectDB = async () => {
 
   try {
     const conn = await mongoose.connect(process.env.MONGODB_URL, {
-      serverSelectionTimeoutMS: 30000,
-      socketTimeoutMS: 45000,
-      maxPoolSize: 10,
-      minPoolSize: 5,
+      serverSelectionTimeoutMS: 10000,
+      socketTimeoutMS: 20000,
+      maxPoolSize: 5,
+      minPoolSize: 1,
       retryWrites: true,
-      connectTimeoutMS: 30000,
-      family: 4, // Use IPv4
-      waitQueueTimeoutMS: 30000,
+      connectTimeoutMS: 10000,
+      family: 4,
+      waitQueueTimeoutMS: 5000,
     });
 
     dbConnection = conn;

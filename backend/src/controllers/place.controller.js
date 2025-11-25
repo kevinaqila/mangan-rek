@@ -145,22 +145,15 @@ export const getTrendingPlaces = async (req, res) => {
       { $group: { _id: "$place", recentReviews: { $sum: 1 } } },
       { $sort: { recentReviews: -1 } },
       { $limit: 5 },
-    ])
-      .maxTimeMS(15000)
-      .allowDiskUse(true);
+    ]);
 
     let trendingPlaces = [];
 
     if (trendingPlaceIds.length > 0) {
-      // Ekstrak hanya ID tempatnya
       const placeIds = trendingPlaceIds.map((item) => item._id);
-
-      // 5. Ambil data lengkap dari tempat-tempat yang trending tersebut
       trendingPlaces = await Place.find({ _id: { $in: placeIds } })
         .populate("category")
-        .populate("createdBy", "fullName profilePic")
-        .maxTimeMS(15000)
-        .lean();
+        .populate("createdBy", "fullName profilePic");
     }
 
     // Jika tidak ada trending, fallback ke newest places
@@ -169,9 +162,7 @@ export const getTrendingPlaces = async (req, res) => {
         .sort({ createdAt: -1 })
         .limit(5)
         .populate("category")
-        .populate("createdBy", "fullName profilePic")
-        .maxTimeMS(15000)
-        .lean();
+        .populate("createdBy", "fullName profilePic");
     }
 
     res.status(200).json(trendingPlaces);
