@@ -20,10 +20,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// CORS - Allow semua origin untuk development/production
+// Simple CORS for portfolio
 app.use(cors({
-  origin: "*",
-  credentials: false,
+  origin: ["http://localhost:5173", "https://mangan-rek.vercel.app"],
+  credentials: true,
 }));
 
 app.use("/api/auth", authRoutes);
