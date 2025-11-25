@@ -16,15 +16,27 @@ const app = express();
 
 const PORT = process.env.PORT || 5001;
 
+// CORS Configuration
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:3000",
+  process.env.FRONTEND_URL,
+].filter(Boolean);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(
   cors({
-    origin: ["http://localhost:5173", process.env.FRONTEND_URL].filter(Boolean),
+    origin: allowedOrigins,
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+
+// Handle preflight requests
+app.options("*", cors());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
@@ -39,6 +51,20 @@ app.get("/", (req, res) => {
     message: "Mangan Rek API Server",
     status: "running",
     version: "1.0.0",
+  });
+});
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({ message: "Route not found" });
+});
+
+// Global error handler
+app.use((err, req, res, next) => {
+  console.error("Global error handler:", err);
+  res.status(err.status || 500).json({
+    message: err.message || "Internal server error",
+    status: err.status || 500,
   });
 });
 
