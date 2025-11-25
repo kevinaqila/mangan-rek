@@ -137,22 +137,13 @@ export const getAllPlaces = async (req, res) => {
 
 export const getTrendingPlaces = async (req, res) => {
   try {
-    // Tentukan batas waktu (misal: 30 hari yang lalu)
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-    // Gunakan Agregasi untuk menghitung ulasan terbaru
     const trendingPlaceIds = await Rating.aggregate([
-      // 1. Saring: Ambil ulasan yang dibuat dalam 30 hari terakhir
       { $match: { createdAt: { $gte: thirtyDaysAgo } } },
-
-      // 2. Kelompokkan: Hitung jumlah ulasan untuk setiap 'place'
       { $group: { _id: "$place", recentReviews: { $sum: 1 } } },
-
-      // 3. Urutkan: Dari yang jumlah ulasan terbarunya paling banyak
       { $sort: { recentReviews: -1 } },
-
-      // 4. Batasi: Ambil 5 teratas
       { $limit: 5 },
     ]);
 
