@@ -16,6 +16,11 @@ const app = express();
 
 const PORT = process.env.PORT || 5001;
 
+// Connect to MongoDB on startup (for both serverless and normal)
+connectDB().catch(err => {
+  console.error("Failed to connect to MongoDB:", err);
+});
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -56,7 +61,12 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.listen(PORT, "0.0.0.0", async () => {
-  console.log(`Server running on port ${PORT}`);
-  await connectDB();
-});
+// For local development
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, "0.0.0.0", () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
+
+// For Vercel serverless
+export default app;

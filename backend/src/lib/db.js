@@ -13,19 +13,22 @@ export const connectDB = async () => {
     if (!mongoUri) {
       console.error("❌ MONGODB_URL environment variable is not set!");
       console.log("⚠️  Please set MONGODB_URL in your .env file or Vercel dashboard");
-      process.exit(1);
+      // Don't exit in production serverless
+      if (process.env.NODE_ENV !== 'production') {
+        process.exit(1);
+      }
+      throw new Error("MONGODB_URL not set");
     }
 
     console.log("Connecting to MongoDB...");
     const conn = await mongoose.connect(mongoUri, {
-      serverSelectionTimeoutMS: 10000,
-      socketTimeoutMS: 20000,
-      maxPoolSize: 5,
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 10000,
+      maxPoolSize: 3,
       minPoolSize: 1,
       retryWrites: true,
-      connectTimeoutMS: 10000,
+      connectTimeoutMS: 5000,
       family: 4,
-      waitQueueTimeoutMS: 5000,
     });
 
     dbConnection = conn;
@@ -49,6 +52,11 @@ export const connectDB = async () => {
     console.error("2. Network connectivity to MongoDB Atlas");
     console.error("3. IP whitelist in MongoDB Atlas (allow 0.0.0.0/0 for testing)");
     dbConnection = null;
-    process.exit(1);
+    
+    // Don't exit in production serverless
+    if (process.env.NODE_ENV !== 'production') {
+      process.exit(1);
+    }
+    throw error;
   }
 };
