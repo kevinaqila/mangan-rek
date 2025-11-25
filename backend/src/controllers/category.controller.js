@@ -33,10 +33,13 @@ export const addCategory = async(req, res) => {
 
 export const getCategories = async(req, res) => {
     try {
-        const categories = await Category.find().sort({ createdAt: -1 });
+        const categories = await Category.find()
+            .sort({ createdAt: -1 })
+            .maxTimeMS(15000)
+            .lean();
         res.status(200).json(categories);
     } catch (error) {
-        console.log("Error in getCategories controller", error.message);
+        console.error("Error in getCategories controller:", error.message);
         res.status(500).json({ message: "Internal server error" });
     }
 }

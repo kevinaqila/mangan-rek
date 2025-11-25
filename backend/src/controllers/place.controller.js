@@ -145,7 +145,9 @@ export const getTrendingPlaces = async (req, res) => {
       { $group: { _id: "$place", recentReviews: { $sum: 1 } } },
       { $sort: { recentReviews: -1 } },
       { $limit: 5 },
-    ]);
+    ])
+      .maxTimeMS(15000)
+      .allowDiskUse(true);
 
     let trendingPlaces = [];
 
@@ -156,7 +158,9 @@ export const getTrendingPlaces = async (req, res) => {
       // 5. Ambil data lengkap dari tempat-tempat yang trending tersebut
       trendingPlaces = await Place.find({ _id: { $in: placeIds } })
         .populate("category")
-        .populate("createdBy", "fullName profilePic");
+        .populate("createdBy", "fullName profilePic")
+        .maxTimeMS(15000)
+        .lean();
     }
 
     // Jika tidak ada trending, fallback ke newest places
@@ -165,7 +169,9 @@ export const getTrendingPlaces = async (req, res) => {
         .sort({ createdAt: -1 })
         .limit(5)
         .populate("category")
-        .populate("createdBy", "fullName profilePic");
+        .populate("createdBy", "fullName profilePic")
+        .maxTimeMS(15000)
+        .lean();
     }
 
     res.status(200).json(trendingPlaces);
