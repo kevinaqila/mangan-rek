@@ -10,7 +10,7 @@ export const useUserStore = create((set) => ({
     getUserProfile: async(userId) => {
         set({ isFetchingProfile: true });
         try {
-            const res = await axiosInstance.get(`/users/profile/${userId}`);
+            const res = await axiosInstance.get(`/api/users/profile/${userId}`);
             set({ userProfile: res.data });
         } catch (error) {
             toast.error(error.response.data.message)
@@ -22,7 +22,7 @@ export const useUserStore = create((set) => ({
     updateProfile: async(data) => {
         set({ isUpdatingProfile: true });
         try {
-            const res = await axiosInstance.put("/users/update-profile", data);
+            const res = await axiosInstance.put("/api/users/update-profile", data);
             set({ userProfile: {...data, ...res.data } });
             toast.success("Profile updated successfully");
         } catch (error) {

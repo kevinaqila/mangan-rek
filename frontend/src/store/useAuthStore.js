@@ -20,7 +20,7 @@ export const useAuthStore = create((set) => ({
         return;
       }
 
-      const res = await axiosInstance.get("/auth/check");
+      const res = await axiosInstance.get("/api/auth/check");
       set({
         authUser: res.data.user,
         isCheckingAuth: false,
@@ -38,7 +38,7 @@ export const useAuthStore = create((set) => ({
   signup: async (data) => {
     set({ isSigningUp: true });
     try {
-      const res = await axiosInstance.post("/auth/signup", data);
+      const res = await axiosInstance.post("/api/auth/signup", data);
       localStorage.setItem("token", res.data.token);
       set({ authUser: res.data.user });
       toast.success("Account created successfully");
@@ -57,7 +57,7 @@ export const useAuthStore = create((set) => ({
       isLoggingIn: true,
     });
     try {
-      const res = await axiosInstance.post("/auth/login", data);
+      const res = await axiosInstance.post("/api/auth/login", data);
 
       if (!res.data.user) {
         throw new Error("Login failed: User data missing in response");
@@ -86,7 +86,7 @@ export const useAuthStore = create((set) => ({
   changePassword: async (data) => {
     set({ isUpdatingPassword: true });
     try {
-      await axiosInstance.put("/auth/change-password", data);
+      await axiosInstance.put("/api/auth/change-password", data);
       toast.success("Password updated successfully");
     } catch (error) {
       const message = (error.response && error.response.data && error.response.data.message) || "Something went wrong";

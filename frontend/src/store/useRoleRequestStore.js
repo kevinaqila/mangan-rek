@@ -10,7 +10,7 @@ export const useRoleRequestStore = create((set) => ({
   submitRoleRequest: async (requestedRole, reason = "") => {
     set({ isSubmitting: true });
     try {
-      const res = await axiosInstance.post("/role-requests/request", {
+      const res = await axiosInstance.post("/api/role-requests/request", {
         requestedRole,
         reason,
       });
@@ -28,7 +28,7 @@ export const useRoleRequestStore = create((set) => ({
   fetchRoleRequests: async (status = "pending") => {
     set({ isLoading: true });
     try {
-      const res = await axiosInstance.get(`/role-requests/all?status=${status}`);
+      const res = await axiosInstance.get(`/api/role-requests/all?status=${status}`);
       set({ roleRequests: res.data });
     } catch (error) {
       const msg = error.response?.data?.message || "Failed to fetch role requests";
@@ -41,7 +41,7 @@ export const useRoleRequestStore = create((set) => ({
 
   approveRoleRequest: async (requestId) => {
     try {
-      const res = await axiosInstance.put(`/role-requests/${requestId}/approve`);
+      const res = await axiosInstance.put(`/api/role-requests/${requestId}/approve`);
       toast.success("Role request approved");
       set((state) => ({
         roleRequests: state.roleRequests.filter((req) => req._id !== requestId),
@@ -56,7 +56,7 @@ export const useRoleRequestStore = create((set) => ({
 
   rejectRoleRequest: async (requestId, rejectionReason = "") => {
     try {
-      const res = await axiosInstance.put(`/role-requests/${requestId}/reject`, {
+      const res = await axiosInstance.put(`/api/role-requests/${requestId}/reject`, {
         rejectionReason,
       });
       toast.success("Role request rejected");

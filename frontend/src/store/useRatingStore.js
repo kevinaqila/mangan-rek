@@ -12,7 +12,7 @@ export const useRatingStore = create((set, get) => ({
     getRatingPlace: async(placeId) => {
         set({ isLoadingRatings: true });
         try {
-            const res = await axiosInstance.get(`/ratings/${placeId}`);
+            const res = await axiosInstance.get(`/api/ratings/${placeId}`);
             set({ ratings: res.data });
         } catch (error) {
             toast.error(error.response.data.message)
@@ -35,7 +35,7 @@ export const useRatingStore = create((set, get) => ({
                 })
             }
 
-            const res = await axiosInstance.post(`/ratings/${data.place}`, ratingData, {
+            const res = await axiosInstance.post(`/api/ratings/${data.place}`, ratingData, {
                 headers: {
                     "Content-Type": "multipart/form-data"
                 }
