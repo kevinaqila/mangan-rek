@@ -16,27 +16,15 @@ const app = express();
 
 const PORT = process.env.PORT || 5001;
 
-// CORS Configuration
-const allowedOrigins = [
-  "http://localhost:5173",
-  "http://localhost:3000",
-  process.env.FRONTEND_URL,
-].filter(Boolean);
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(
-  cors({
-    origin: allowedOrigins,
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
 
-// Handle preflight requests
-app.options("*", cors());
+// CORS - Allow semua origin untuk development/production
+app.use(cors({
+  origin: "*",
+  credentials: false,
+}));
 
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
