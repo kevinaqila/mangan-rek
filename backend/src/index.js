@@ -17,7 +17,7 @@ const app = express();
 const PORT = process.env.PORT || 5001;
 
 // Connect to MongoDB on startup (for both serverless and normal)
-connectDB().catch(err => {
+connectDB().catch((err) => {
   console.error("Failed to connect to MongoDB:", err);
 });
 
@@ -26,10 +26,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // Simple CORS for portfolio
-app.use(cors({
-  origin: ["http://localhost:5173", "https://mangan-rek.vercel.app"],
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: ["http://localhost:5173", "https://mangan-rek.vercel.app"],
+    credentials: true,
+  })
+);
 
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
@@ -62,7 +64,7 @@ app.use((err, req, res, next) => {
 });
 
 // For local development
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV !== "production") {
   app.listen(PORT, "0.0.0.0", () => {
     console.log(`Server running on port ${PORT}`);
   });
