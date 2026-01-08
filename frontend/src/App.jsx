@@ -57,10 +57,7 @@ const App = () => {
         <Route path="/signup" element={authUser ? <Navigate to="/" /> : <SignUpPage />} />
         <Route path="/login" element={authUser ? <Navigate to="/" /> : <LoginPage />} />
         <Route path="/explore" element={<ExplorePage isNavbarOpen={isNavbarOpen} />} />
-        <Route
-          path="/:slug"
-          element={authUser ? <DetailPage isNavbarOpen={isNavbarOpen} /> : <Navigate to="/login" />}
-        />
+        <Route path="/:slug" element={<DetailPage isNavbarOpen={isNavbarOpen} />} />
         <Route
           path="/profile"
           element={authUser ? <ProfilePage isNavbarOpen={isNavbarOpen} /> : <Navigate to="/login" />}
