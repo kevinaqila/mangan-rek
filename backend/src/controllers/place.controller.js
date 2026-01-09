@@ -28,7 +28,7 @@ export const addPlace = async (req, res) => {
     // Upload Main Image (from buffer for serverless)
     const mainImageFile = files.mainImage[0];
     const mainImageResult = await cloudinary.uploader.upload(
-      `data:${mainImageFile.mimetype};base64,${mainImageFile.buffer.toString('base64')}`,
+      `data:${mainImageFile.mimetype};base64,${mainImageFile.buffer.toString("base64")}`,
       { folder: "mangan_rek_places" }
     );
 
@@ -36,10 +36,9 @@ export const addPlace = async (req, res) => {
     let galleryImagesUrls = [];
     if (files.galleryImages) {
       const uploadPromises = files.galleryImages.map((file) =>
-        cloudinary.uploader.upload(
-          `data:${file.mimetype};base64,${file.buffer.toString('base64')}`,
-          { folder: "mangan_rek_places" }
-        )
+        cloudinary.uploader.upload(`data:${file.mimetype};base64,${file.buffer.toString("base64")}`, {
+          folder: "mangan_rek_places",
+        })
       );
 
       const galleryImagesResults = await Promise.all(uploadPromises);

@@ -34,10 +34,9 @@ export const addRating = async (req, res) => {
 
     if (req.files && req.files.length > 0) {
       const uploadPromises = req.files.map((file) =>
-        cloudinary.uploader.upload(
-          `data:${file.mimetype};base64,${file.buffer.toString('base64')}`,
-          { folder: "mangan_rek_places_reviews" }
-        )
+        cloudinary.uploader.upload(`data:${file.mimetype};base64,${file.buffer.toString("base64")}`, {
+          folder: "mangan_rek_places_reviews",
+        })
       );
 
       const uploadResults = await Promise.all(uploadPromises);
