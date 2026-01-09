@@ -15,7 +15,7 @@ export const signup = async (req, res) => {
       return res.status(400).json({ message: "password must be at least 8 characters" });
     }
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: email.toLowerCase() });
     if (user) return res.status(400).json({ message: "User already exists" });
 
     const salt = await bcrypt.genSalt(10);
@@ -23,7 +23,7 @@ export const signup = async (req, res) => {
 
     const newUser = new User({
       fullName,
-      email,
+      email: email.toLowerCase(),
       password: hashedPassword,
     });
 
@@ -50,7 +50,11 @@ export const signup = async (req, res) => {
 export const login = async (req, res) => {
   const { email, password } = req.body;
   try {
-    const user = await User.findOne({ email }).select("+password");
+    if (!email || !password) {
+      return res.status(400).json({ message: "Email and password are required" });
+    }
+
+    const user = await User.findOne({ email: email.toLowerCase() }).select("+password");
 
     if (!user) {
       return res.status(400).json({ message: "Invalid credentials" });
@@ -75,7 +79,7 @@ export const login = async (req, res) => {
       },
     });
   } catch (error) {
-    console.log("Error in login controller", error.message);
+    console.error("Error in login controller:", error.message);
     res.status(500).json({ message: "Internal server error" });
   }
 };
