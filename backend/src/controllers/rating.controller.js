@@ -34,16 +34,14 @@ export const addRating = async (req, res) => {
 
     if (req.files && req.files.length > 0) {
       const uploadPromises = req.files.map((file) =>
-        cloudinary.uploader.upload(file.path, {
-          folder: "mangan_rek_places_reviews",
-        })
+        cloudinary.uploader.upload(
+          `data:${file.mimetype};base64,${file.buffer.toString('base64')}`,
+          { folder: "mangan_rek_places_reviews" }
+        )
       );
 
       const uploadResults = await Promise.all(uploadPromises);
-
       imageUrls = uploadResults.map((result) => result.secure_url);
-
-      req.files.forEach((file) => fs.unlinkSync(file.path));
     }
 
     const newRating = new Rating({
@@ -64,16 +62,7 @@ export const addRating = async (req, res) => {
       place: newRating.place,
     });
   } catch (error) {
-    console.log("Error in addRating controller", error.message);
-
-    if (req.files && req.files.length > 0) {
-      req.files.forEach((file) => {
-        fs.unlink(file.path, (err) => {
-          if (err) console.error("Gagal menghapus file sementara saat error:", err);
-        });
-      });
-    }
-
+    console.error("Error in addRating controller:", error.message);
     res.status(500).json({ message: "Internal server error" });
   }
 };

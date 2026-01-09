@@ -25,21 +25,21 @@ export const addPlace = async (req, res) => {
       return res.status(400).json({ message: "Place already exists" });
     }
 
-    // Upload Main Image
+    // Upload Main Image (from buffer for serverless)
     const mainImageFile = files.mainImage[0];
-    // Mencatat path untuk dihapus di akhir
-    tempFilePaths.push(mainImageFile.path);
-
-    const mainImageResult = await cloudinary.uploader.upload(mainImageFile.path, { folder: "mangan_rek_places" });
+    const mainImageResult = await cloudinary.uploader.upload(
+      `data:${mainImageFile.mimetype};base64,${mainImageFile.buffer.toString('base64')}`,
+      { folder: "mangan_rek_places" }
+    );
 
     // Upload Gallery Images
     let galleryImagesUrls = [];
     if (files.galleryImages) {
-      // Mencatat path untuk dihapus di akhir
-      files.galleryImages.forEach((file) => tempFilePaths.push(file.path));
-
       const uploadPromises = files.galleryImages.map((file) =>
-        cloudinary.uploader.upload(file.path, { folder: "mangan_rek_places" })
+        cloudinary.uploader.upload(
+          `data:${file.mimetype};base64,${file.buffer.toString('base64')}`,
+          { folder: "mangan_rek_places" }
+        )
       );
 
       const galleryImagesResults = await Promise.all(uploadPromises);
@@ -50,18 +50,16 @@ export const addPlace = async (req, res) => {
       name,
       description,
       address,
-      location: JSON.parse(location), //Memparsing string JSON dari form-data menjadi object
-      openHours: JSON.parse(openHours), //Memparsing string JSON dari form-data menjadi object
+      location: JSON.parse(location),
+      openHours: JSON.parse(openHours),
       mainImage: mainImageResult.secure_url,
       galleryImages: galleryImagesUrls,
-      category: JSON.parse(category), //Memparsing string JSON dari form-data menjadi array
+      category: JSON.parse(category),
       priceRange,
       createdBy,
     });
 
     await newPlace.save();
-
-    tempFilePaths.forEach((path) => fs.unlinkSync(path));
 
     res.status(201).json({
       _id: newPlace._id,
@@ -77,25 +75,8 @@ export const addPlace = async (req, res) => {
       createdBy: newPlace.createdBy,
     });
   } catch (error) {
-    console.log("Error in addPlace controller", error.message);
-
-    // Jika terjadi error di mana pun, hapus semua file sementara yang mungkin sudah dibuat
-    if (req.files) {
-      if (req.files.mainImage) {
-        fs.unlink(req.files.mainImage[0].path, (err) => {
-          if (err) console.error("Failed to delete temp mainImage on error:", err);
-        });
-      }
-      if (req.files.galleryImages) {
-        req.files.galleryImages.forEach((file) => {
-          fs.unlink(file.path, (err) => {
-            if (err) console.error("Failed to delete temp galleryImage on error:", err);
-          });
-        });
-      }
-    }
-
-    res.status(500).json({ message: "Internal server error" });
+    console.error("Error in addPlace controller:", error.message);
+    res.status(500).json({ message: "Internal server error", error: error.message });
   }
 };
 
